@@ -1,6 +1,6 @@
 # music
 
-> A Vue.js project
+> 一个利用vue2.0实现的云音乐
 
 ## Build Setup
 
