@@ -2,19 +2,19 @@
   <div class="song">
     <div class="bg"></div>
     <div class="zz"></div>
-    <div class="gp"><img src="/static/images/temp.jpg" width="45" alt=""></div>
+    <div class="gp animated" ref="gp"><img src="/static/images/temp.jpg" width="45" alt=""></div>
     <div class="title">
       <h1>刚好遇见你</h1>
-      <p>李玉刚</p>
+      <p >李玉刚</p>
     </div>
     <div class="liner">
-      <span>00:00</span>
-      <div><span></span><i></i></div>
-      <span>03:20</span>
+      <span>{{startTime}}</span>
+      <div><span ref="progressBar"></span><i ref="dot"></i></div>
+      <span>{{endTime}}</span>
     </div>
     <div class="player">
       <i class="iconfont">&#xe601;</i>
-      <i class="iconfont">&#xe623;</i>
+      <i class="iconfont" @click="control" :class="icon"></i>
       <i class="iconfont">&#xe600;</i>
     </div>
     <audio ref="mAudio" src="/static/李玉刚 - 刚好遇见你.mp3" autoplay></audio>
@@ -23,21 +23,77 @@
 
 <script>
 export default {
-  data:{
-    startTime:'00:00',
-    endTime:'00:00',
+  data: function () {
+    return {
+      startTime: '00:00',
+      endTime: '00:00',
+      obj: '',
+      icon: 'playIcon',
+      t: '',
+      ss: '00',
+      mm: '00',
+      s: '',
+      m: '',
+      percent: ''
+    }
+  },
+  methods: {
+    control: function () {
+      if (this.obj.paused) {
+        if (this.percent >= 100) {
+          this.ss = '00'
+          this.mm = '00'
+          this.percent = 0
+        }
+        this.obj.play()
+        this.timer()
+        this.$refs.gp.classList.add('animated')
+        this.icon = 'playIcon'
+      } else {
+        this.obj.pause()
+        clearInterval(this.t)
+        this.$refs.gp.classList.remove('animated')
+        this.icon = 'pauseIcon'
+      }
+    },
+    timer: function () {
+      var that = this
+      that.t = setInterval(function () {
+        var currTime = parseInt(that.obj.currentTime)
+        if (currTime >= 60) {
+          that.mm = parseInt(currTime / 60)
+          that.mm = (that.mm) > 9 ? (that.mm) : '0' + (that.mm)
+          that.ss = parseInt(currTime % 60) > 9 ? parseInt(currTime % 60) : '0' + parseInt(currTime % 60)
+        } else {
+          that.ss = (currTime) > 9 ? (currTime) : '0' + (currTime)
+        }
+        that.startTime = that.mm + ':' + that.ss
+        that.percent = ((parseInt(that.mm) * 60 + parseInt(that.ss)) / parseInt(that.obj.duration)) * 100
+        that.$refs.dot.style.left = (that.percent - 3) + '%'
+        that.$refs.progressBar.style.width = that.percent + '%'
+        if (that.percent >= 100) {
+          clearInterval(that.t)
+          that.$refs.gp.classList.remove('animated')
+          that.icon = 'pauseIcon'
+        }
+      }, 1000)
+    }
   },
   mounted: function () {
-    let that = this
-    var s = ((that.$refs.mAudio.duration)%60) > 9?((that.$refs.mAudio.duration)%60):'0' + ((that.$refs.mAudio.duration)%60)
-    var m = parseInt((that.$refs.mAudio.duration)/60) > 9:parseInt((that.$refs.mAudio.duration)/60):'0'+parseInt((that.$refs.mAudio.duration)/60)
-     that.endTime = m + ':' + s
-    var t = setInterval(function () {
-      console.log(that.$refs.mAudio.duration)
-    }, 1000)
-    if(that.$refs.mAudio.ended){
-      clearInterval(t);
-    }
+    var that = this
+    that.$refs.gp.classList.remove('animated')
+    that.icon = 'pauseIcon'
+    that.obj = that.$refs.mAudio
+    that.obj.addEventListener('canplay', function () {
+      if (!that.obj.paused) {
+        that.$refs.gp.classList.add('animated')
+        that.icon = 'playIcon'
+        that.timer()
+      }
+      that.s = parseInt((that.obj.duration) % 60) > 9 ? parseInt((that.obj.duration) % 60) : '0' + parseInt((that.obj.duration) % 60)
+      that.m = parseInt((that.obj.duration) / 60) > 9 ? parseInt((that.obj.duration) / 60) : '0' + parseInt((that.obj.duration) / 60)
+      that.endTime = that.m + ':' + that.s
+    })
   }
 }
 </script>
@@ -49,6 +105,12 @@ export default {
   transform: rotate(0deg);
  to
   transform: rotate(360deg);
+.playIcon:after
+ content:'\e66a'
+ font-family:'iconfont'
+.pauseIcon:after
+ content:'\e623'
+ font-family:'iconfont'
 .song
  position:absolute;
  background:#333;
@@ -85,7 +147,8 @@ export default {
   width:24.6rem;
   margin:8rem auto 0;
   background-size:100% 100%;
-  animation: gd 10s linear infinite;
+  &.animated
+   animation: gd 10s linear infinite;
   img
    position:relative;
    z-index:999;
@@ -114,13 +177,13 @@ export default {
    background:#fff;
    position:relative;
    >span
-    width:20%;
+    width:0;
     height:.2rem;
     display:block;
     background:#0088d6;
    >i
     position:absolute;
-    left:20%;
+    left:-3%;
     width:1rem;
     height:1rem;
     top:-.4rem;
