@@ -1,17 +1,16 @@
 <template>
   <ul class="list">
-    <li><a href="#"><i class="iconfont">&#xe623;</i><h2>情话</h2><p><i class="iconfont">&#xe603;</i>余佳运-情话</p></a></li>
-    <li><a href="#"><i class="iconfont">&#xe623;</i><h2>情话</h2><p><i class="iconfont">&#xe603;</i>余佳运-情话</p></a></li>
-    <li><a href="#"><i class="iconfont">&#xe623;</i><h2>情话</h2><p><i class="iconfont">&#xe603;</i>余佳运-情话</p></a></li>
-    <li><a href="#"><i class="iconfont">&#xe623;</i><h2>情话</h2><p>余佳运-情话</p></a></li>
-    <li><a href="#"><i class="iconfont">&#xe623;</i><h2>情话</h2><p>余佳运-情话</p></a></li>
-    <li><a href="#"><i class="iconfont">&#xe623;</i><h2>情话</h2><p>余佳运-情话</p></a></li>
-    <li><a href="#"><i class="iconfont">&#xe623;</i><h2>情话</h2><p>余佳运-情话</p></a></li>
+    <li v-for="item in dataList"><router-link  :to="{path:'/song', query: { id: item.id }}"><i class="iconfont">&#xe623;</i><h2>{{item.title}}</h2><p><i class="iconfont">&#xe603;</i>{{item.singer}}-{{item.title}}</p></router-link></li>
   </ul>
 </template>
 
 <script>
 export default {
+  data: function () {
+    return {
+    }
+  },
+  props: ['dataList']
 }
 </script>
 
@@ -39,6 +38,8 @@ export default {
    text-decoration:none;
    padding:1rem 0 .5rem 0;
    display:block;
+   position:relative;
+   z-index:9999;
    h2
     font:normal 1.8rem/1 'microsoft yahei';
     color:#000;

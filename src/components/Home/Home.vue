@@ -11,7 +11,7 @@
 	</ul>
 	
 	<h1>最新音乐</h1>
-	<List></List>
+	<List :data-list="dataList"></List>
   <div class="footer">
       <p>版权所有 ©2017</p> 
   </div>
@@ -21,8 +21,19 @@
 <script>
 import List from '../List/List'
 export default {
+  data: function () {
+    return {
+      dataList: []
+    }
+  },
   components: {
     List: List
+  },
+  created: function () {
+    this.$http.get('http://localhost:3000/api').then(function (res) {
+      this.dataList = res.data.data
+      console.log(res.data.data)
+    })
   }
 }
 </script>

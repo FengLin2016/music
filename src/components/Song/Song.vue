@@ -4,8 +4,8 @@
     <div class="zz"></div>
     <div class="gp animated" ref="gp"><img src="/static/images/temp.jpg" width="45" alt=""></div>
     <div class="title">
-      <h1>刚好遇见你</h1>
-      <p >李玉刚</p>
+      <h1>{{title}}</h1>
+      <p >{{singer}}</p>
     </div>
     <div class="liner">
       <span>{{startTime}}</span>
@@ -17,7 +17,7 @@
       <i class="iconfont" @click="control" :class="icon"></i>
       <i class="iconfont">&#xe600;</i>
     </div>
-    <audio ref="mAudio" src="/static/李玉刚 - 刚好遇见你.mp3" autoplay></audio>
+    <audio ref="mAudio" :src="mp3" autoplay></audio>
   </div>
 </template>
 
@@ -34,8 +34,19 @@ export default {
       mm: '00',
       s: '',
       m: '',
-      percent: ''
+      percent: '',
+      mp3: 'http://localhost:3000/uploads/',
+      title: '',
+      singer: ' '
     }
+  },
+  created: function () {
+    this.$http.get('http://localhost:3000/api/' + this.$route.query.id).then(function (res) {
+      this.mp3 = this.mp3 + res.data.data.mp3
+      this.title = res.data.data.title
+      this.singer = res.data.data.singer
+    })
+    console.log(this.$route.query.id)
   },
   methods: {
     control: function () {
@@ -94,6 +105,9 @@ export default {
       that.m = parseInt((that.obj.duration) / 60) > 9 ? parseInt((that.obj.duration) / 60) : '0' + parseInt((that.obj.duration) / 60)
       that.endTime = that.m + ':' + that.s
     })
+  },
+  beforeDestroy: function () {
+    clearInterval(this.t)
   }
 }
 </script>
