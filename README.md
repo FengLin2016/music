@@ -34,6 +34,7 @@ npm install
 npm run start
 ```
 
+*手机访问的话需要将客户端的localhost替换成你的ip地址*
 [具体步骤及注意事项](http://www.xiayulin.cn)
 
 For detailed explanation on how things work, checkout the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).
