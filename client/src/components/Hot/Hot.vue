@@ -6,49 +6,13 @@
 	</div>
   	<div class="HotList">
   		<ul>
-  			<li><a href="#">
-  				<span>01</span>
+  			<li v-for="item,index in hotList"><router-link  :to="{path:'/song', query: { id: item.id }}">
+  				<span>{{(index+1<10)?'0'+(index+1):(index+1)}}</span>
   				<div>
   					<i class="iconfont">&#xe623;</i>
-  					<h2>情话</h2><p><i class="iconfont">&#xe603;</i>余佳运-情话</p>
+  					<h2>{{item.title}}</h2><p><i class="iconfont">&#xe603;</i>{{item.singer}}-{{item.title}}</p>
   				</div>
-  			</a></li>
-  			<li><a href="#">
-  				<span>02</span>
-  				<div>
-  					<i class="iconfont">&#xe623;</i>
-  					<h2>情话</h2><p>余佳运-情话</p>
-  				</div>
-  			</a></li>
-  			<li><a href="#">
-  				<span>03</span>
-  				<div>
-  					<i class="iconfont">&#xe623;</i>
-  					<h2>情话</h2><p><i class="iconfont">&#xe603;</i>余佳运-情话</p>
-  				</div>
-  			</a></li>
-  			<li><a href="#">
-  				<span>04</span>
-  				<div>
-  					<i class="iconfont">&#xe623;</i>
-  					<h2>情话</h2><p>余佳运-情话</p>
-  				</div>
-  			</a></li>
-  			<li><a href="#">
-  				<span>05</span>
-  				<div>
-  					<i class="iconfont">&#xe623;</i>
-  					<h2>情话</h2><p>余佳运-情话</p>
-  				</div>
-  			</a></li>
-  			<li><a href="#">
-  				<span>06</span>
-  				<div>
-  					<i class="iconfont">&#xe623;</i>
-  					<h2>情话</h2><p>余佳运-情话</p>
-  				</div>
-  			</a></li>
-
+  			</router-link></li>
   		</ul>
   	</div>
   </div>
@@ -56,6 +20,16 @@
 
 <script>
 export default {
+  data: function () {
+    return {
+      hotList: []
+    }
+  },
+  created: function () {
+    this.$http.get('http://localhost:3000/api/menu/5').then(function (res) {
+      this.hotList = res.data.data
+    })
+  }
 }
 </script>
 
@@ -79,7 +53,6 @@ export default {
     color:#ffa300;
   li a
    display:flex;
-   
    color:#000;
    font:normal 1.8rem/1.5 'microsoft yahei';
    text-decoration:none;

@@ -1,103 +1,50 @@
 <template>
   <div class="theme">
     <div class="title">
-	  	<img src="/static/images/hot.jpg" width="100%" alt="">
-	  	<span>更新时间：2017-07-24</span>
+      <h1>{{title}}</h1>
+	  	<img :src="img" width="100%" height="200" alt="">
+	  	<span>更新时间：{{nowDate}}</span>
 	</div>
   	<div class="HotList">
   		<ul>
-  			<li><a href="#">
-  				<span>01</span>
-  				<div>
-  					<i class="iconfont">&#xe623;</i>
-  					<h2>情话</h2><p><i class="iconfont">&#xe603;</i>余佳运-情话</p>
-  				</div>
-  			</a></li>
-  			<li><a href="#">
-  				<span>02</span>
-  				<div>
-  					<i class="iconfont">&#xe623;</i>
-  					<h2>情话</h2><p>余佳运-情话</p>
-  				</div>
-  			</a></li>
-  			<li><a href="#">
-  				<span>03</span>
-  				<div>
-  					<i class="iconfont">&#xe623;</i>
-  					<h2>情话</h2><p><i class="iconfont">&#xe603;</i>余佳运-情话</p>
-  				</div>
-  			</a></li>
-  			<li><a href="#">
-  				<span>04</span>
-  				<div>
-  					<i class="iconfont">&#xe623;</i>
-  					<h2>情话</h2><p>余佳运-情话</p>
-  				</div>
-  			</a></li>
-  			<li><a href="#">
-  				<span>05</span>
-  				<div>
-  					<i class="iconfont">&#xe623;</i>
-  					<h2>情话</h2><p>余佳运-情话</p>
-  				</div>
-  			</a></li>
-  			<li><a href="#">
-  				<span>06</span>
-  				<div>
-  					<i class="iconfont">&#xe623;</i>
-  					<h2>情话</h2><p>余佳运-情话</p>
-  				</div>
-  			</a></li>
-        <li><a href="#">
-          <span>06</span>
+  			<li v-for="item,index in dataList"><router-link  :to="{path:'/song', query: { id: item.id }}">
+          <span>{{(index+1<10)?'0'+(index+1):(index+1)}}</span>
           <div>
             <i class="iconfont">&#xe623;</i>
-            <h2>情话</h2><p>余佳运-情话</p>
+            <h2>{{item.title}}</h2><p><i class="iconfont">&#xe603;</i>{{item.singer}}-{{item.title}}</p>
           </div>
-        </a></li>
-        <li><a href="#">
-          <span>06</span>
-          <div>
-            <i class="iconfont">&#xe623;</i>
-            <h2>情话</h2><p>余佳运-情话</p>
-          </div>
-        </a></li>
-        <li><a href="#">
-          <span>06</span>
-          <div>
-            <i class="iconfont">&#xe623;</i>
-            <h2>情话</h2><p>余佳运-情话</p>
-          </div>
-        </a></li>
-        <li><a href="#">
-          <span>06</span>
-          <div>
-            <i class="iconfont">&#xe623;</i>
-            <h2>情话</h2><p>余佳运-情话</p>
-          </div>
-        </a></li>
-        <li><a href="#">
-          <span>06</span>
-          <div>
-            <i class="iconfont">&#xe623;</i>
-            <h2>情话</h2><p>余佳运-情话</p>
-          </div>
-        </a></li>
-        <li><a href="#">
-          <span>06</span>
-          <div>
-            <i class="iconfont">&#xe623;</i>
-            <h2>情话</h2><p>余佳运-情话</p>
-          </div>
-        </a></li>
-
+        </router-link></li>
   		</ul>
   	</div>
   </div>
 </template>
 
 <script>
+var now = new Date()
 export default {
+  data: function () {
+    return {
+      dataList: [],
+      img: '',
+      title: '',
+      nowDate: (now.getFullYear() + '年' + (((now.getMonth() + 1) < 10) ? '0' + (now.getMonth() + 1) : (now.getMonth() + 1)) + '月' + ((now.getDate() < 10) ? '0' + now.getDate() : now.getDate()) + '日')
+    }
+  },
+  created: function () {
+    var that = this
+    this.$http.get('http://localhost:3000/api/menu/' + this.$route.query.type).then(function (res) {
+      this.dataList = res.data.data
+    })
+    // 这里可以在后台处理成一个请求 实现联合查询 或者 保存之前的数据（数据缓存）
+    this.$http.get('http://localhost:3000/api/menu/').then(function (res) {
+      res.data.data.forEach(function (item) {
+        if (parseInt(item.id) === parseInt(that.$route.query.type)) {
+          that.img = 'http://localhost:3000/uploads/' + item.img
+          that.title = item.title
+        }
+      })
+    })
+  }
 }
 </script>
 
@@ -106,16 +53,26 @@ export default {
 .theme
  position:absolute;
  z-index:9999;
+ width:100%;
  top:0;
  left:0;
  .title
   overflow:hidden;
   position:relative;
+  h1
+   position:absolute;
+   color:#fff;
+   font-size:2.2rem;
+   z-index:9999;
+   line-height:2;
+   padding:3rem 1.5rem 0 1.5rem;
+  img
+   filter: blur(0);
   span
    position:absolute;
    right:2rem;
    bottom:1.5rem;
-   color:#555;
+   color:#fff;
    font:normal 1.2rem/1 'microsoft yahei';
 .HotList
   overflow:hidden;

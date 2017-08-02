@@ -5,16 +5,17 @@ block content
   nav.navbar.navbar-inverse 
     .container
       ul.nav.navbar-nav
-        li.active
-          a(href="#") 首页
         li
-          a(href="#") 分类
+          a(href="/admin/menu") 歌单
+        li.active
+          a(href="/admin") 歌曲
   .text-right
    input.btn.btn-primary(type="button" value="添加" onclick="canlce()" data-toggle="modal" data-target="#myModal")
   div &nbsp;
   table.table
       tr
        th.text-center id
+       th 栏目
        th 名称
        th 歌手
        th 描述
@@ -23,6 +24,7 @@ block content
       - for (var x = 0; x < list.length; x++)
        tr
         td.text-center= list[x].id
+        td= list[x].Menu.title
         td= list[x].title
         td= list[x].singer
         td #{list[x].description}
@@ -45,13 +47,24 @@ block content
              .col-xs-10
                input.form-control(type="text" name="title" id="title")
            .form-group
+             label.col-xs-2.text-right.control-label(for="menu") 栏目
+             .col-xs-10
+               select.form-control(type="text" name="menu" id="menu" )
+                 each item, i in menuData
+                   option(value= item.id ) #{item.title}
+           .form-group
              label.col-xs-2.text-right.control-label(for="singer") 歌手
              .col-xs-10
                input.form-control(type="text" name="singer" id="singer" )
            .form-group
+             label.col-xs-2.text-right.control-label(for="img") 封面
+             .col-xs-10.relative
+               input.file(type="file" name="imgFile" onchange="changeFile2(this)")
+               input.form-control(type="text" readonly="true" name="imgFile2"  id="img")
+           .form-group
              label.col-xs-2.text-right.control-label(for="mp3") 文件
              .col-xs-10.relative
-               input.file(type="file" name="file" onchange="changeFile(this)")
+               input.file(type="file" name="imgFile" onchange="changeFile(this)")
                input.form-control(type="text" readonly="true" name="mp3"  id="mp3")
            .form-group
              label.col-xs-2.text-right.control-label(for="description") 描述
@@ -69,13 +82,16 @@ block content
             success:function(res){
                if(res.data){
                 alert('删除成功！')
-                location.href ="/admin"
+                location.href ="/admin/menu"
                }
             }
         })
     }
     function changeFile(obj){
         $("#mp3").val($(obj).val().substr(12))
+    }
+    function changeFile2(obj){
+        $("#img").val($(obj).val().substr(12))
     }
     function edit(id){
          $.ajax({

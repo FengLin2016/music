@@ -2,12 +2,7 @@
   <div class="home">
   	<h1>推荐歌单</h1>
 	<ul class="gd">
-		<li><router-link  :to="{path:'/song', query: { type: 1 }}"><img src="/static/images/temp.jpg" alt=""><p>林肯公园主唱离世 | 我努力过 但终究徒劳</p></router-link></li>
-		<li><router-link :to="{path:'/theme', query: { type: 2 }}"><img src="/static/images/temp.jpg" alt=""><p>林肯公园主唱离世 | 我努力过 但终究徒劳</p></router-link></li>
-    <li><router-link :to="{path:'/theme', query: { type: 3 }}"><img src="/static/images/temp.jpg" alt=""><p>林肯公园主唱离世 | 我努力过 但终究徒劳</p></router-link></li>
-    <li><router-link :to="{path:'/theme', query: { type: 4 }}"><img src="/static/images/temp.jpg" alt=""><p>林肯公园主唱离世 | 我努力过 但终究徒劳</p></router-link></li>
-    <li><router-link :to="{path:'/theme', query: { type: 5 }}"><img src="/static/images/temp.jpg" alt=""><p>林肯公园主唱离世 | 我努力过 但终究徒劳</p></router-link></li>
-    <li><router-link :to="{path:'/theme', query: { type: 6 }}"><img src="/static/images/temp.jpg" alt=""><p>林肯公园主唱离世 | 我努力过 但终究徒劳</p></router-link></li>
+		<li v-for = "item in menuList" v-if="item.title!='热歌榜单'"><router-link  :to="{path:'/theme', query: { type: item.id }}"><img :src="host+item.img" alt=""><p>{{item.title}}</p></router-link></li>
 	</ul>
 	
 	<h1>最新音乐</h1>
@@ -23,7 +18,9 @@ import List from '../List/List'
 export default {
   data: function () {
     return {
-      dataList: []
+      host: 'http://localhost:3000/uploads/',
+      dataList: [],
+      menuList: []
     }
   },
   components: {
@@ -32,7 +29,9 @@ export default {
   created: function () {
     this.$http.get('http://localhost:3000/api').then(function (res) {
       this.dataList = res.data.data
-      console.log(res.data.data)
+    })
+    this.$http.get('http://localhost:3000/api/menu').then(function (res) {
+      this.menuList = res.data.data
     })
   }
 }

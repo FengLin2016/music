@@ -1,0 +1,94 @@
+extends  ../layout
+
+block content
+  h1=title
+  nav.navbar.navbar-inverse 
+    .container
+      ul.nav.navbar-nav
+        li.active
+          a(href="/admin/menu") 歌单
+        li
+          a(href="/admin") 歌曲
+  .text-right
+   input.btn(type="button" value="添加栏目" onclick="canlceMenu()" data-toggle="modal" data-target="#myMenuModal")
+  div &nbsp;
+  table.table
+      tr
+       th.text-center id
+       th 名称
+       th 封面
+       th 描述
+       th 更新时间
+       th.text-center(width="120") 操作
+      - for (var x = 0; x < list.length; x++)
+       tr
+        td.text-center= list[x].id
+        td= list[x].title
+        td= list[x].img
+        td #{list[x].description}
+        td #{moment(list[x].updatedAt).format("YYYY-MM-DD")}
+        td.text-center 
+         input.btn.btn-danger.btn-sm(type="button" onclick="del("+ list[x].id+")" value="删除")
+         span    
+         input.btn.btn-info.btn-sm(type="button" value="修改" onclick="editMenu("+ list[x].id+")" data-toggle="modal" data-target="#myMenuModal")    
+  .modal.fade#myMenuModal(tabindex="-2" role="dialog") 
+   .modal-dialog(role="document")
+     .modal-content
+       form.form-horizontal(method="POST" action="/admin/menu" enctype="multipart/form-data")
+        .modal-header
+          button(type="button" class="close" data-dismiss="modal" aria-label="Close")
+            span(aria-hidden="true") &times;
+          h4.modal-title.menu 添加
+        .modal-body
+           .form-group
+             label.col-xs-2.text-right.control-label 栏目标题
+             .col-xs-10
+               input.form-control(type="text" name="title" id="menuTitle")
+           .form-group
+             label.col-xs-2.text-right.control-label 封面
+             .col-xs-10.relative
+               input.file(type="file" name="imgFile" onchange="changeFile(this)")
+               input.form-control(type="text" readonly="true" name="imgFileMenu2"  id="menuImg")
+           .form-group
+             label.col-xs-2.text-right.control-label 描述
+             .col-xs-10
+               textarea.form-control(type="text" rows="5" name="description" id="menuDescription")
+             input.form-control(type="hidden" name="id" id="menuId")
+        .modal-footer
+          button(type="button" class="btn btn-default"  data-dismiss="modal") 取消
+          input(type="submit" class="btn btn-primary" value="保存")
+  script.
+   function del(id){
+         $.ajax({
+            url:"/admin/delMenu/"+id,
+            type:'GET',
+            success:function(res){
+               if(res.data){
+                alert('删除成功！')
+                location.href ="/admin/menu"
+               }
+            }
+        })
+    }
+    function changeFile(obj){
+        $("#menuImg").val($(obj).val().substr(12))
+    }
+    function editMenu(id){
+         $.ajax({
+            url:"/admin/menu/"+id,
+            type:'GET',
+            success:function(res){
+               $("#menuTitle").val(res.data.title)
+               $("#menuImg").val(res.data.img)
+               $("#menuDescription").html(res.data.description)
+               $("#menuId").val(res.data.id)
+               $(".modal-title.menu").html("修改")
+            }
+        })
+    }
+    function canlceMenu(){
+               $("#menuTitle").val('')
+               $("#menuDescription").html('')
+               $("#menuId").val('')
+               $(".modal-title.menu").html("添加")
+    }

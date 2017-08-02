@@ -1,8 +1,8 @@
 <template>
   <div class="song">
-    <div class="bg"></div>
+    <div class="bg" :style="{'background-image':'url('+img+')'}"></div>
     <div class="zz"></div>
-    <div class="gp animated" ref="gp"><img src="/static/images/temp.jpg" width="45" alt=""></div>
+    <div class="gp animated" ref="gp"><img :src="img" width="45" alt=""></div>
     <div class="title">
       <h1>{{title}}</h1>
       <p >{{singer}}</p>
@@ -17,7 +17,7 @@
       <i class="iconfont" @click="control" :class="icon"></i>
       <i class="iconfont">&#xe600;</i>
     </div>
-    <audio ref="mAudio" :src="mp3" autoplay></audio>
+    <audio ref="mAudio" id="mAudio" autoplay="autoplay" :src="mp3" ></audio>
   </div>
 </template>
 
@@ -28,6 +28,7 @@ export default {
       startTime: '00:00',
       endTime: '00:00',
       obj: '',
+      img: '',
       icon: 'playIcon',
       t: '',
       ss: '00',
@@ -35,18 +36,18 @@ export default {
       s: '',
       m: '',
       percent: '',
-      mp3: 'http://localhost:3000/uploads/',
+      mp3: 'localhost:3000/uploads/',
       title: '',
       singer: ' '
     }
   },
-  created: function () {
-    this.$http.get('http://localhost:3000/api/' + this.$route.query.id).then(function (res) {
+  beforeCreate: function () {
+    this.$http.get('localhost:3000/api/' + this.$route.query.id).then(function (res) {
       this.mp3 = this.mp3 + res.data.data.mp3
       this.title = res.data.data.title
       this.singer = res.data.data.singer
+      this.img = 'localhost:3000/uploads/' + res.data.data.img
     })
-    console.log(this.$route.query.id)
   },
   methods: {
     control: function () {
@@ -95,6 +96,7 @@ export default {
     that.$refs.gp.classList.remove('animated')
     that.icon = 'pauseIcon'
     that.obj = that.$refs.mAudio
+    that.obj.load()
     that.obj.addEventListener('canplay', function () {
       if (!that.obj.paused) {
         that.$refs.gp.classList.add('animated')
@@ -119,6 +121,11 @@ export default {
   transform: rotate(0deg);
  to
   transform: rotate(360deg);
+@keyframes zzyd
+ from
+  transform: rotate(-30deg);
+ to
+  transform: rotate(0);
 .playIcon:after
  content:'\e66a'
  font-family:'iconfont'
@@ -140,12 +147,17 @@ export default {
   background:transparent url(/static/images/zz.png) no-repeat center top;
   background-size:100% auto;
   z-index:99991;
+  animation: zzyd .5s linear;
+  transform-origin:0 0;
   right:50%;
   margin-right:-7rem;
  .bg
   position:absolute;
-  background:#000 url(/static/images/temp.jpg) no-repeat center top;
   background-size:auto 100%;
+  background-color:#000;
+  background-repeat:no-repeat;
+  background-attachment:fixed;
+  background-position:center;
   filter: blur(5px) brightness(50%);
   z-index:999;
   top:0;
